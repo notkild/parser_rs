@@ -35,7 +35,7 @@ impl Parser {
         where F: Fn(char) -> bool
     {
         let mut result = String::new();
-        while !self.is_eof && func(self.next()) {
+        while !self.is_eof() && func(self.next()) {
             let c = self.consume();
             result.push(c);
         }
