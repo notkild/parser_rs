@@ -53,6 +53,12 @@ impl Parser {
         result
     }
 
+    /// Consume whitespaces
+    pub fn consume_whitespace(&mut self) -> String {
+        self.consume_while(|c| c.is_whitespace())
+    }
+
+
     /// Consume until the next char is the specified char
     pub fn consume_until(&mut self, c: char) -> String {
         self.consume_while(|nc| nc != c)
