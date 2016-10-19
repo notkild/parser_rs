@@ -6,9 +6,10 @@ use parser_rs::Parser;
 fn consume_char() {
     let a = "abc";
     let mut parser = Parser::new(a);
-    assert_eq!(parser.consume(), 'a');
-    assert_eq!(parser.consume(), 'b');
-    assert_eq!(parser.consume(), 'c');
+    assert_eq!(parser.consume(), Some('a'));
+    assert_eq!(parser.consume(), Some('b'));
+    assert_eq!(parser.consume(), Some('c'));
+    assert_eq!(parser.consume(), None);
 }
 
 #[test]
@@ -32,4 +33,16 @@ fn consume_until_str() {
     let s = "hello world from another world";
     let mut parser = Parser::new(s);
     assert_eq!(parser.consume_until_str("another"), "hello world from ");
+}
+
+#[test]
+fn consume_inside() {
+    let s = "hello world \"from another world\"";
+    let mut parser = Parser::new(s);
+    assert_eq!(parser.consume_until('\"'), "hello world ");
+    assert_eq!(parser.consume_inside('\"'), "from another world");
+
+    let s = "\"from another world";
+    let mut parser = Parser::new(s);
+    assert_eq!(parser.consume_inside('\"'), "from another world");
 }

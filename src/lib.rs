@@ -22,14 +22,17 @@ impl Parser {
     }
 
     /// Return the next char without changing the index
-    pub fn next(&self) -> char {
-        self.content[self.idx..].chars().next().unwrap()
+    pub fn next(&self) -> Option<char> {
+        self.content[self.idx..].chars().next()
     }
 
     /// Return the next char and move the char by one
-    pub fn consume(&mut self) -> char {
+    pub fn consume(&mut self) -> Option<char> {
         let mut indices = self.content[self.idx..].char_indices();
-        let (_, c) = indices.next().unwrap();
+        let c = match indices.next() {
+            Some((_, c)) => Some(c),
+            _ => None,
+        };
         let (next_idx, _) = indices.next().unwrap_or((1, ' '));
         self.idx += next_idx;
         c
@@ -40,8 +43,11 @@ impl Parser {
         where F: Fn(char) -> bool
     {
         let mut result = String::new();
-        while !self.is_eof() && func(self.next()) {
-            let c = self.consume();
+        while !self.is_eof() && func(self.next().unwrap()) {
+            let c = match self.consume() {
+                Some(c) => c,
+                None => return result,
+            };
             result.push(c);
         }
         result
@@ -56,9 +62,23 @@ impl Parser {
     pub fn consume_until_str(&mut self, s: &str) -> String {
         let mut result = String::new();
         while !self.is_eof() && !self.starts_with(s) {
-            let c = self.consume();
+            let c = match self.consume() {
+                Some(c) => c,
+                None => return result,
+            };
             result.push(c);
         }
+        result
+    }
+
+    /// Consume inside the same two char, specified in arg
+    pub fn consume_inside(&mut self, c: char) -> String {
+        if self.next() != Some(c) && self.content[self.idx + 1..].contains("\"") {
+            return String::new();
+        }
+        self.consume();
+        let result = self.consume_until(c);
+        self.consume();
         result
     }
 }
