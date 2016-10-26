@@ -77,6 +77,15 @@ impl Parser {
         result
     }
 
+    /// Consume until end of file
+    pub fn consume_until_end(&mut self) -> String {
+        let mut result = String::new();
+        while !self.is_eof() {
+            result.push(self.consume().unwrap());
+        }
+        result
+    }
+
     /// Consume inside the same two char, specified in arg
     pub fn consume_inside(&mut self, c: char) -> String {
         if self.next() != Some(c) && self.content[self.idx + 1..].contains("\"") {
