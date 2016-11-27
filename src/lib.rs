@@ -77,6 +77,24 @@ impl Parser {
         result
     }
 
+    /// Consume until the content match the specified strs
+    pub fn consume_until_strs(&mut self, s: &[&str]) -> String {
+        let mut result = String::new();
+        'main: while !self.is_eof() {
+            for to_match in s {
+                if self.starts_with(to_match) {
+                    break 'main;
+                }
+            }
+            let c = match self.consume() {
+                Some(c) => c,
+                None => return result,
+            };
+            result.push(c);
+        }
+        result
+    }
+
     /// Consume until end of file
     pub fn consume_until_end(&mut self) -> String {
         let mut result = String::new();

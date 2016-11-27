@@ -36,6 +36,15 @@ fn consume_until_str() {
 }
 
 #[test]
+fn consume_until_strs() {
+    let s = "hello world from another world";
+    let mut parser = Parser::new(s);
+    assert_eq!(parser.consume_until_strs(&["world", "another"]), "hello ");
+    parser.consume_until(' ');
+    assert_eq!(parser.consume_until_strs(&["world", "another"]), " from ");
+}
+
+#[test]
 fn consume_until_end() {
     let s = "hello world";
     let mut parser = Parser::new(s);
